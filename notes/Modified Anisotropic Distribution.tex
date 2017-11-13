@@ -1,0 +1,223 @@
+\documentclass[showpacs,aps,prd,nofootinbib,showkeys,superscriptaddress,twocolumn]{revtex4-1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%packages
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{amssymb}
+\usepackage{amsmath,latexsym}
+\usepackage[usenames]{color}
+\usepackage{subfigure}
+\usepackage{subfigure}
+\usepackage{physymb}
+\usepackage{slashed}
+\usepackage{multirow,array}
+\usepackage{mathtools}
+\usepackage{mathrsfs}
+\usepackage[colorlinks=false,linktocpage=true]{hyperref}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{lipsum}
+\usepackage{dsfont}
+%
+%\renewcommand{\baselinestretch}{1.5}
+%
+%
+\usepackage{soul}
+\usepackage{color}
+\usepackage[colorlinks=false,linktocpage=true]{hyperref}
+\usepackage{hyperref}
+%\usepackage[retainorgcmds]{IEEEtrantools}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\bea}{\begin{eqnarray}}
+\newcommand{\eea}{\end{eqnarray}}
+\newcommand{\idd}{\indent \indent}
+\newcommand{\blue}{\textcolor{blue}}
+\newcommand{\red}{\textcolor{red}}
+%%%%%%
+\newcommand{\api}{\big(b_n \, \rho^{(n)}_B\big)}
+\newcommand{\bpi}{\big(b_n \, \epsilon^{(n)}_{eq}\big)}
+\newcommand{\cpi}{(\rho_B T)}
+\newcommand{\dpi}{\big(b_n \, \epsilon^{(n)}_{eq}\big)}
+\newcommand{\epi}{\mathcal{I}_{30}}
+\newcommand{\fpi}{\mathcal{I}_{31}}
+\newcommand{\gpi}{(\rho_B T)}
+\newcommand{\hpi}{\mathcal{I}_{31}}
+\newcommand{\jpi}{\mathcal{I}_{32}}
+\newcommand{\bmu}{\langle \mu \rangle}
+\newcommand{\bnu}{\langle \nu \rangle}
+\newcommand{\munu}{{\mu\nu}}
+%%%%%%%
+\newcommand{\del}{\partial}
+\newcommand{\tr}{\tau_{r}}
+\newcommand{\feq}{f_{eq}}
+\newcommand{\pxp}{(- p \cdot \Xi \cdot p)}
+\newcommand{\dft}{\delta f_a}
+\newcommand{\ddft}{\delta \dot{\tilde{f}}}
+\newcommand{\n}{\newline}
+\newcommand{\up}{u \cdot p}
+\newcommand{\aP}{\alpha_\perp}
+\newcommand{\aL}{\alpha_L}
+\newcommand{\aPsq}{\alpha^2_\perp}
+\newcommand{\aLsq}{\alpha^2_L}
+\newcommand{\ppmunu}{p^{\{\mu} p^{\nu\}}}
+\newcommand{\zp}{z \cdot p}
+\newcommand{\mzp}{(- z \cdot p)}
+\newcommand{\pOp}{(p \cdot \Omega \cdot p)}
+\newcommand{\Pm}{\mathcal{P}}
+\newcommand{\ene}{\mathcal{E}}
+\newcommand{\alphavec}{\mathbf{\alpha}}
+\newcommand{\alphaT}{\alpha_\perp}
+\newcommand{\alphaL}{\alpha_L}
+\newcommand{\pbar}{\bar{p}}
+\newcommand{\mbar}{\bar{m}}
+\newcommand{\order}{\mathcal{O}}
+\newcommand{\BL}{\beta_\Lambda}
+\newcommand{\PL}{\mathcal{P}_L}
+\newcommand{\Pperp}{\mathcal{P}_\perp}
+\newcommand{\Peq}{\mathcal{P}_{eq}}
+\newcommand{\bs}{\begin{subequations}}
+\newcommand{\es}{\end{subequations}}
+\newcommand{\beal}{\begin{align}}
+\newcommand{\enal}{\end{align}}
+\newcommand{\pperp}{p^{\{\mu\}}}
+\newcommand{\pperpnu}{p^{\{\nu\}}}
+\newcommand{\nabperp}{\tilde{\nabla}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\J}{\mathcal{J}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\Hm}{\mathcal{G}}
+\newcommand{\piperp}{\pi_\perp}
+\newcommand{\Wperp}{W_{\perp z}}
+%\newcommand{\order}{\mathcal{O}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\title{Modified Particle Distributions for the Hadronization Phase}
+\date{\today}
+\author{M.~McNelis}
+\affiliation{Department of Physics, The Ohio State University, Columbus, OH 43210, USA}
+\author{U.~Heinz}
+\affiliation{Department of Physics, The Ohio State University, Columbus, OH 43210, USA}
+\begin{abstract}
+We introduce a positive-definite single-particle distribution function that is suitable for describing the hadronization phase of heavy-ion collisions, in particular for particlization hypersurfaces with large bulk pressures. This distribution function is derived by perturbing the hydrodynamic fields of a locally anisotropic distribution function. The result is a set of two distinct linear transformations that shift the local momenta of these particles; the specific form of the mapping depends on the dissipative components of the energy-momentum tensor. Our formalism is then tested for the case of a stationary hadron resonance gas subject to a wide variety of shear and bulk stresses. We find that the energy-momentum tensor of the hadron resonance gas can be accurately reproduced while maintaining the positive-definiteness of the probability distribution. 
+\end{abstract}
+\maketitle
+Given the particlization hypersurface $\Sigma$, the particle spectrum of type $n$ is provided by the Cooper Frye formula 
+\be
+E \frac{dN_n}{d^3p} = \int_\Sigma d\sigma \cdot p \, f_n(x,p) 
+\ee
+where $f_n$ is the particle specie's distribution function. If the hadron resonance gas is locally thermalized the distribution takes the form 
+\be
+\feq(x,p) = g_n \left[\exp\left(\frac{u(x)\cdot p - \mu_n(x)}{T(x)}\right) + \Theta_n\right]^{-1}
+\ee
+where $g_n$ is the spin degeneracy, $u^\mu(x)$ is the fluid velocity, $T(x)$ is the temperature, $\mu_n(x)$ is the chemical potential of species $n$ and $\Theta_n = (1,0,-1)$ is a constant accounting for quantum statistics. However, these distribution functions are generally out-of-equilibrium at the conversion surface due to viscous fluid dynamics. In practice, a linear correction $\delta f$ to the thermal distribution is added to try to account for these deviations. Two popular approaches in the literature include the 14-moment approximation and the relaxation time approximation. Unfortunately, these corrections can have negative probability regions at sufficiently hard momenta and intensifies with increasing viscous stresses. The problem is readily apparent in situations where the bulk pressure corrections are large, which can easily over-suppress the $p_T$ spectra of heavy hadrons with masses on the order of 1 GeV. The current solution is to simply move the switching temperature $T_{sw}$ away from the critical temperature region where the bulk viscosity is large. However, this model parameter is typically fitted to be around 145 MeV for the LHC energies and 165 MeV for top RHIC energies, meaning that the critical temperature needs to be adjusted far above the more realistic value of $T_c$ = 154 MeV. 
+\n\n
+The modified anisotropic distribution can be constructed by introducing perturbations to the local hydrodynamic fields 
+\be
+f(x,p) = \left[\exp\left(\frac{\sqrt{p \cdot (\Omega(x) + \delta \Omega(x,p)) \cdot p}}{\Lambda(x)+\delta \Lambda(x,p)}\,\right)+\Theta\right]^{-1}
+\ee 
+The perturbation of a field $G(x)$ of some tensorial-rank is determined by evaluating the path integral 
+\be
+\label{eq:tracepast}
+\begin{split} 
+\delta G(x,p) &= G(x+\delta s) - G(x) = \int^{\delta s}_{0} ds \cdot \partial \left[G(x+s) \right] \\
+&\approx \partial G(x) \cdot \delta s^{(0)}(x,p) + \order(\delta^2) \\
+& =  - \frac{\tau_r(x) \, p^\alpha \partial_\alpha G(x)}{u(x) \cdot p} + \order(\delta^2) 
+\end{split}
+\ee 
+where $s^\nu_{(0)} = - \dfrac{\tau_r \, p^\nu}{\up}$ is the zeroth-order particle mean-free-path. Eq.~\eqref{eq:tracepast} can interpreted as a type of gradient expansion whose coefficients can be fixed to the hydrodynamic variables order-by-order, similar to the Chapman-Enskog expansion. It valid as long as $\abs{\delta G} << \abs{G}$. However we restrict ourselves to working with the first-order expansion, where the coefficients can be solved by equating the dissipative hydrodynamic components to their Navier Stokes expressions.
+\be
+\begin{split}
+\delta \Omega_\munu = \,\, & (1+\xi_\perp) (u_\mu \delta u_\nu + \delta u_\mu u_\nu) \\
+& + (\xi_L - \xi_\perp)(z_\mu \delta z_\nu + \delta z_\mu z_\nu) \\
+& - \delta\xi_\perp \Xi_\munu + \delta\xi_L z_\mu z_\nu + \order(\delta^2)
+\end{split}
+\ee 
+\be
+f(x,p) \approx f_a + f_a(1+\Theta f_a)\dfrac{\pOp \dfrac{\delta\Lambda}{\Lambda} - \dfrac{1}{2} (p \cdot\delta\Omega\cdot p)}{\Lambda\pOp^{1/2}}
+\ee 
+\be
+\begin{split}
+p \cdot \delta\Omega \cdot p =  \,\, & 2(1+\xi_\perp)(\up)(\delta u \cdot p) \\
+& - 2(\xi_L - \xi_\perp)\mzp (\delta z \cdot p) \\
+& + \delta\xi_\perp \pxp + \delta\xi_L\mzp^2
+\end{split}
+\ee 
+\be
+\begin{split}
+\delta u \cdot p &= - \frac{\tau_r}{\up} \left[p^{\{\mu} p^{\nu\}} \tilde\sigma_\munu + \mzp p^{\{\mu\}}\big(z_\alpha\nabperp_\mu u^\alpha - D_z u_\mu\big) \right] \\
+\delta z \cdot p &= \tau_r \, p^{\{\mu\}} z_\alpha\nabperp_\mu u^\alpha
+\end{split}
+\ee 
+\be
+\begin{aligned}
+\delta \ene = 0 \idd & \idd \delta \Pperp = 0 \idd & \idd \delta \PL = 0 
+\end{aligned}
+\ee 
+\be
+\begin{aligned}
+\delta \Lambda = 0 \idd & \idd \delta \xi_\perp = 0 \idd & \idd \delta \xi_L = 0 
+\end{aligned}
+\ee 
+Thus after one fixes these parameters the anisotropic hydrodynamic matching conditions are naturally satisfied up to $\order(\delta)$.  
+\be
+\begin{split}
+\piperp^\munu &= \int_P p^{\{\mu} p^{\nu\}} \dft \\
+\idd \Wperp^\mu &=  \int_P \mzp p^{\{\mu\}}\dft 
+\end{split}
+\ee
+where $\dft = f - f_a$ is 
+\begin{widetext}
+\be
+\delta f_a = \frac{\tau_r \, f_a(1+\Theta f_a)}{\Lambda\pOp^{1/2}} \left[(1+\xi_\perp)p^{\{\mu} p^{\nu\}} \tilde\sigma_\munu + \mzp p^{\{\mu\}}\big((1+\xi_L)z_\alpha \nabperp_\mu u^\alpha - (1+\xi_\perp)D_z u_\mu\big)\right]
+\ee \n
+\end{widetext}
+\be
+\begin{split}
+\piperp^\munu &= \frac{2\,(1+\xi_\perp) \tau_r \, \J_{402-1}}{\Lambda} \, \tilde\sigma^\munu \\
+\Wperp^\mu &= - \frac{\tau_r \, \J_{421-1}}{\Lambda} \,((1+\xi_L)z_\alpha \nabperp^\mu u^\alpha - (1+\xi_\perp) \Xi^\munu D_z u_\nu\big)
+\end{split}
+\ee \n
+\be
+p \cdot\delta\Omega\cdot p = - \frac{\Lambda \, p_{\{\mu} \, p_{\nu\}} \piperp^\munu}{\J_{402-1}} + \frac{\Lambda \, \mzp p_{\{\mu\}} \Wperp^\mu}{\J_{421-1}}
+\ee \n
+where we define the anisotropic moments $\J_{nrqs}(\Lambda,\alpha_\perp,\alpha_L)$ in App. A. 
+\begin{widetext}
+\be
+\bold{A} = \bold{\mathds{1}} + \bold{\delta}_{\pi W} = \left(
+\begin{array}{c c c}
+1 + \dfrac{\alpha_\perp^2 \Lambda \piperp^{xx}}{2\,\J_{402-1}} \, & \, \dfrac{\alpha_\perp^2 \Lambda \piperp^{xy}}{2\,\J_{402-1}} \, & \, \dfrac{\alpha_\perp^2 \alpha_L \Lambda \Wperp^x}{(\alpha_\perp+\alpha_L)\J_{421-1}}  \\\\
+\dfrac{\alpha_\perp^2 \Lambda \piperp^{xy}}{2\,\J_{402-1}} \, & \, 1 - \dfrac{\alpha_\perp^2 \Lambda \piperp^{xx}}{2\,\J_{402-1}} \, & \, \dfrac{\alpha_\perp^2 \alpha_L \Lambda \Wperp^y}{(\alpha_\perp+\alpha_L)\J_{421-1}} \\\\
+\dfrac{\alpha_\perp \alpha^2_L \Lambda \Wperp^x}{(\alpha_\perp+\alpha_L)\J_{421-1}} \, & \, \dfrac{\alpha_\perp \alpha^2_L \Lambda \Wperp^y}{(\alpha_\perp+\alpha_L)\J_{421-1}} \, & \, 1 \\
+\end{array}
+\right)
+\ee \n 
+\end{widetext}
+\be
+\bold{B} = \left(
+\begin{array}{c c c}
+\alpha_\perp & 0 & 0  \\
+0 & \alpha_\perp & 0 \\
+0 & 0 & \alpha_L \\
+\end{array}
+\right)
+\ee \n
+Putting all of these components altogether, the modified distribution function can be written in a compact form. 
+\be
+\label{eq:famod}
+f_n(x,p) = g_n \frac{\det \bold{B}}{\det \bold{A}}\left[\exp\left(\beta_\Lambda \sqrt{m_n^2 + (\bold{B}^{-1}\bold{A}^{-1}\bold{p})^2} \right)+\Theta_n\right]^{-1}
+\ee 
+Eq.~\eqref{eq:famod} is the main result of this work.
+\appendix
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Anisotropic integrals}
+\label{app:integrals}
+\be
+\begin{split}
+\J_{nrqs} = & \frac{1}{(2q)!!} \int_P (u \cdot p)^{n-r-2q} \, (- z \cdot p)^r \\
+& (- p \cdot \Xi \cdot p)^q \, \pOp^{s/2} \, f_a (1 + \Theta f_a)
+\end{split}
+\ee
+\end{document}
