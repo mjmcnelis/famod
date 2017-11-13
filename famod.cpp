@@ -119,7 +119,7 @@ int main()
 	}
 
 
-
+	fclose(HRG);
 
 
 
