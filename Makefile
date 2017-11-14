@@ -6,7 +6,7 @@ DIR_MAIN = ./
 DIR_SRC = ./
 DIR_OBJ = ./
 
-CFLAGS= $(OPTIMIZATION) $(OPTIONS)
+CFLAGS = $(OPTIMIZATION) $(OPTIONS)
 
 
 # Compiler options
