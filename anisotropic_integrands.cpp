@@ -5,18 +5,34 @@
 #include "rfunctions.hpp"
 
 
-// thermal energy density
-double Eeq_integrand(double pbar, double mbar, int sign)
+// equilibrium net baryon density 
+double nBeq_integrand(double pbar, double mbar, double aB, int baryon, int sign)
 {
-	// gauss laguerre (a = 2)
-	return sqrt(pbar*pbar + mbar*mbar) * exp(pbar) / (exp(sqrt(pbar*pbar + mbar*mbar)) + (double)sign);
+	double Ebar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	// gla (a = 1)
+	return bn * pbar * exp(pbar) / (exp(Ebar-bn*aB)+a);
 }
 
-// thermal pressure
-double Peq_integrand(double pbar, double mbar, int sign)
+// equilibrium energy density
+double Eeq_integrand(double pbar, double mbar, double alphaB, int baryon, int sign)
 {
-	// gauss laguerre (a = 2)
-	return pbar*pbar / sqrt(pbar*pbar + mbar*mbar) * exp(pbar) / (exp(sqrt(pbar*pbar + mbar*mbar)) + (double)sign);
+	double Ebar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	// gla (a = 2)
+	return Ebar * exp(pbar) / (exp(Ebar-bn*aB)+a);
+}
+
+// equilibrium pressure
+double Peq_integrand(double pbar, double mbar, double alphaB, int baryon, int sign)
+{
+	double Ebar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	// gla (a = 2)
+	return pbar*pbar/Ebar * exp(pbar) / (exp(Ebar-bn*aB)+a);
 }
 
 
@@ -31,83 +47,176 @@ double Peq_integrand(double pbar, double mbar, int sign)
 //																	::
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-
-double Ea_integrand(double pbar, double ax, double az, double mbar, int sign)
-{
-	// gauss laguerre (a = 2)
-	return pbar * R200(pbar,ax,az,mbar) * exp(pbar) / (exp(sqrt(pbar*pbar + mbar*mbar)) + (double)sign);
-}
-
-
-double PTa_integrand(double pbar, double ax, double az, double mbar, int sign)
-{
-	// gauss laguerre (a = 2)
-	return pbar * R201(pbar,ax,az,mbar) * exp(pbar) / (exp(sqrt(pbar*pbar + mbar*mbar)) + (double)sign);
-}
-
-
-double PLa_integrand(double pbar, double ax, double az, double mbar, int sign)
-{
-	// gauss laguerre (a = 2)
-	return pbar * R220(pbar,ax,az,mbar) * exp(pbar) / (exp(sqrt(pbar*pbar + mbar*mbar)) + (double)sign);
-}
-
-
-double I402m1_integrand(double pbar, double ax, double az, double mbar, int sign)
+double nBa_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
 {
 	double Eabar = sqrt(pbar*pbar + mbar*mbar);
-	double qstat = exp(Eabar) + (double)sign;
+	double a = (double)sign;
+	double bn = (double)baryon;
+	// gla (a = 1)
+	return bn * pbar * exp(pbar) / (exp(Eabar-bn*aBt)+a);
+}
+
+double Ea_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	// gla (a = 2)
+	return pbar * R200(pbar,ax,az,mbar) * exp(pbar) / (exp(Eabar-bn*aBt)+a);
+}
+
+
+double PTa_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	// gla (a = 2)
+	return pbar * R201(pbar,ax,az,mbar) * exp(pbar) / (exp(Eabar-bn*aBt)+a);
+}
+
+
+double PLa_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	// gla (a = 2)
+	return pbar * R220(pbar,ax,az,mbar) * exp(pbar) / (exp(Eabar-bn*aBt)+a);
+}
+
+
+double bn2_I1000_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 1)
+	return bn*bn * pbar * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
+}
+
+
+double bn_I2000_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 2)
+	return bn * pbar * R200(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
+}
+
+
+double bn_I2010_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 2)
+	return bn * pbar * R201(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
+}
+
+
+double I2201_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 2)
+	return bn * pbar * R220(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
+}
+
+
+
+double I402m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
 	// fa*(1-sign*fa) = exp(Eabar)/(exp(Eabar)+sign)^2
-	// gauss laguerre (a = 2)
-	return (pbar*pbar / Eabar) * R402(pbar,ax,az,mbar) * exp(pbar+Eabar) / (qstat*qstat);
+	// gla (a = 2)
+	return (pbar*pbar / Eabar) * R402(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
 }
 
 
-double I421m1_integrand(double pbar, double ax, double az, double mbar, int sign)
+double I421m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Esbar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 3)
+	return (pbar*pbar / Eabar) * R421(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
+}
+
+
+double I2001_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
 {
 	double Eabar = sqrt(pbar*pbar + mbar*mbar);
-	double qstat = exp(Eabar) + (double)sign;
-	// gauss laguerre (a = 3)
-	return (pbar*pbar / Eabar) * R421(pbar,ax,az,mbar) * exp(pbar+Eabar) / (qstat*qstat);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 3)
+	return Eabar * R200(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
 }
 
 
-
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-//                TEST 3D ANISOTROPIC FUNCTION INTEGRANDS           ::
-//                                                                  ::
-//      Test functions to show gauss_test_aniso_3D works.           ::
-//	    Compare with the corresponding functions integrated with    ::
-//      gauss_aniso_1D and gauss_mod_aniso_3D w/ no modification    ::
-//                                                                  ::
-//         test3D_Ea         test3D_PTa         test3D_PLa          ::
-//																	::
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
-double test3D_Ea_integrand(double xphi, double costheta, double pbar, double ax, double az, double mbar, int sign)
+double I2011_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
 {
-	double costheta2 = costheta * costheta;
-	// gauss laguerre (a = 2)
-	return pbar * sqrt(ax*ax*(1.0-costheta2) + az*az*costheta2 + (mbar*mbar)/(pbar*pbar)) * exp(pbar) / (exp(sqrt(pbar*pbar + mbar*mbar)));
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 3)
+	return Eabar * R201(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
 }
 
 
-double test3D_PTa_integrand(double xphi, double costheta, double pbar, double ax, double az, double mbar, int sign)
+double I2201_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
 {
-	double costheta2 = costheta * costheta;
-	double sintheta2 = 1.0 - costheta2;
-	// gauss laguerre (a = 2)
-	return pbar * sintheta2 / sqrt(ax*ax*sintheta2 + az*az*costheta2 + (mbar*mbar)/(pbar*pbar)) * exp(pbar) / (exp(sqrt(pbar*pbar + mbar*mbar)) + (double)sign);
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 3)
+	return Eabar * R220(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
 }
 
 
-double test3D_PLa_integrand(double xphi, double costheta, double pbar, double ax, double az, double mbar, int sign)
+// double I401m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+// {
+// 	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+// 	double a = (double)sign;
+// 	double bn = (double)baryon;
+// 	double qstat = exp(Eabar-bn*aBt)+a;
+// 	// gla (a = 3)
+// 	return (pbar*pbar / Eabar) * R401(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
+// }
+
+
+// double I420m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+// {
+// 	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+// 	double a = (double)sign;
+// 	double bn = (double)baryon;
+// 	double qstat = exp(Eabar-bn*aBt)+a;
+// 	// gla (a = 3)
+// 	return (pbar*pbar / Eabar) * R420(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
+// }
+
+
+double I440m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
 {
-	double costheta2 = costheta * costheta;
-	double sintheta2 = 1.0 - costheta2;
-	// gauss laguerre (a = 2)
-	return pbar * costheta2 / sqrt(ax*ax*sintheta2 + az*az*costheta2 + (mbar*mbar)/(pbar*pbar)) * exp(pbar) / (exp(sqrt(pbar*pbar + mbar*mbar)) + (double)sign);
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 3)
+	return (pbar*pbar / Eabar) * R440(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
 }
 
 
@@ -130,8 +239,11 @@ double test3D_PLa_integrand(double xphi, double costheta, double pbar, double ax
 
 
 
-double modEa_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, int sign)
+double modEa_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign)
 {
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
 	// angles of pstar, pbar -> radial momentum of pstar_bar
 	double cosphi = cos(M_PI*(1.0+xphi));
 	double sinphi = sin(M_PI*(1.0+xphi));
@@ -157,13 +269,17 @@ double modEa_integrand(double xphi, double costheta, double pbar, double ax, dou
 	for(int i = 0; i < n; i++) energy_unit += p_unit[i] * p_unit[i];
 	energy_unit = sqrt(energy_unit);
 
-	// gauss laguerre (a = 2)
-	return pbar * energy_unit * exp(pbar) / (exp(sqrt(mbar*mbar + pbar*pbar)) + (double)sign);
+	// gla (a = 2)
+	return pbar * energy_unit * exp(pbar) / (exp(Eabar-bn*aBt)+a);
 }
 
 
-double modPTa_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, int sign)
+double modPTa_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign)
 {
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+
 	double cosphi = cos(M_PI*(1.0+xphi));
 	double sinphi = sin(M_PI*(1.0+xphi));
 	double sintheta = sqrt(1.0 - costheta * costheta);
@@ -185,15 +301,19 @@ double modPTa_integrand(double xphi, double costheta, double pbar, double ax, do
 	double px_unit = p_unit[0];
 	double py_unit = p_unit[1];
 
-	// gauss laguerre (a = 2)
-	return pbar * (px_unit * px_unit + py_unit * py_unit) / energy_unit * exp(pbar) / (exp(sqrt(mbar*mbar + pbar*pbar)) + (double)sign);
+	// gla (a = 2)
+	return pbar * (px_unit * px_unit + py_unit * py_unit) / energy_unit * exp(pbar) / (exp(Eabar-bn*aBt)+a);
 
 
 }
 
 
-double modPLa_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, int sign)
+double modPLa_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign)
 {
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+
 	double cosphi = cos(M_PI*(1.0+xphi));
 	double sinphi = sin(M_PI*(1.0+xphi));
 	double sintheta = sqrt(1.0 - costheta * costheta);
@@ -213,13 +333,17 @@ double modPLa_integrand(double xphi, double costheta, double pbar, double ax, do
 
 	double pz_unit = p_unit[2];
 
-	// gauss laguerre (a = 2)
-	return pbar * pz_unit * pz_unit / energy_unit * exp(pbar) / (exp(sqrt(mbar*mbar + pbar*pbar)) + (double)sign);
+	// gla (a = 2)
+	return pbar * pz_unit * pz_unit / energy_unit * exp(pbar) / (exp(Eabar-bn*aBt)+a);
 }
 
 
-double modpixx_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, int sign)
+double modpixx_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign)
 {
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+
 	double cosphi = cos(M_PI*(1.0+xphi));
 	double sinphi = sin(M_PI*(1.0+xphi));
 	double sintheta = sqrt(1.0 - costheta * costheta);
@@ -240,13 +364,17 @@ double modpixx_integrand(double xphi, double costheta, double pbar, double ax, d
 	double px_unit = p_unit[0];
 	double py_unit = p_unit[1];
 
-	// gauss laguerre (a = 2)
-	return pbar * (px_unit * px_unit - py_unit * py_unit) / energy_unit * exp(pbar) / (exp(sqrt(mbar*mbar + pbar*pbar)) + (double)sign);
+	// gla (a = 2)
+	return pbar * (px_unit * px_unit - py_unit * py_unit) / energy_unit * exp(pbar) / (exp(Eabar-bn*aBt)+a);
 }
 
 
-double modpixy_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, int sign)
+double modpixy_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign)
 {
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+
 	double cosphi = cos(M_PI*(1.0+xphi));
 	double sinphi = sin(M_PI*(1.0+xphi));
 	double sintheta = sqrt(1.0 - costheta * costheta);
@@ -267,13 +395,17 @@ double modpixy_integrand(double xphi, double costheta, double pbar, double ax, d
 	double px_unit = p_unit[0];
 	double py_unit = p_unit[1];
 
-	// gauss laguerre (a = 2)
-	return pbar * px_unit * py_unit / energy_unit * exp(pbar) / (exp(sqrt(mbar*mbar + pbar*pbar)) + (double)sign);
+	// gla (a = 2)
+	return pbar * px_unit * py_unit / energy_unit * exp(pbar) / (exp(Eabar-bn*aBt)+a);
 }
 
 
-double modWxz_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, int sign)
+double modWxz_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign)
 {
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+
 	double cosphi = cos(M_PI*(1.0+xphi));
 	double sinphi = sin(M_PI*(1.0+xphi));
 	double sintheta = sqrt(1.0 - costheta * costheta);
@@ -294,13 +426,17 @@ double modWxz_integrand(double xphi, double costheta, double pbar, double ax, do
 	double px_unit = p_unit[0];
 	double pz_unit = p_unit[2];
 
-	// gauss laguerre (a = 2)
-	return pbar * px_unit * pz_unit / energy_unit * exp(pbar) / (exp(sqrt(mbar*mbar + pbar*pbar)) + (double)sign);
+	// gla (a = 2)
+	return pbar * px_unit * pz_unit / energy_unit * exp(pbar) / (exp(Eabar-bn*aBt)+a);
 }
 
 
-double modWyz_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, int sign)
+double modWyz_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign)
 {
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+
 	double cosphi = cos(M_PI*(1.0+xphi));
 	double sinphi = sin(M_PI*(1.0+xphi));
 	double sintheta = sqrt(1.0 - costheta * costheta);
@@ -321,13 +457,17 @@ double modWyz_integrand(double xphi, double costheta, double pbar, double ax, do
 	double py_unit = p_unit[1];
 	double pz_unit = p_unit[2];
 
-	// gauss laguerre (a = 2)
-	return pbar * py_unit * pz_unit / energy_unit * exp(pbar) / (exp(sqrt(mbar*mbar + pbar*pbar)) + (double)sign);
+	// gla (a = 2)
+	return pbar * py_unit * pz_unit / energy_unit * exp(pbar) / (exp(Eabar-bn*aBt)+a);
 }
 
 
-double modTtx_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, int sign)
+double modTtx_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign)
 {
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+
 	double cosphi = cos(M_PI*(1.0+xphi));
 	double sinphi = sin(M_PI*(1.0+xphi));
 	double sintheta = sqrt(1.0 - costheta * costheta);
@@ -339,15 +479,19 @@ double modTtx_integrand(double xphi, double costheta, double pbar, double ax, do
 	unit_vec[1] = ax * unit_vec[1];
 	unit_vec[2] = az * unit_vec[2];
 
-	for(int i = 0; i < n; i++) for(int k = 0; k < n; k++) px_unit += A[0][k] * unit_vec[k];
+	for(int k = 0; k < n; k++) px_unit += A[0][k] * unit_vec[k];
 
-	// gauss laguerre (a = 2)
-	return pbar * px_unit * exp(pbar) / (exp(sqrt(mbar*mbar + pbar*pbar)) + (double)sign);
+	// gla (a = 2)
+	return pbar * px_unit * exp(pbar) / (exp(Eabar-bn*aBt)+a);
 }
 
 
-double modTty_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, int sign)
+double modTty_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign)
 {
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+
 	double cosphi = cos(M_PI*(1.0+xphi));
 	double sinphi = sin(M_PI*(1.0+xphi));
 	double sintheta = sqrt(1.0 - costheta * costheta);
@@ -359,15 +503,19 @@ double modTty_integrand(double xphi, double costheta, double pbar, double ax, do
 	unit_vec[1] = ax * unit_vec[1];
 	unit_vec[2] = az * unit_vec[2];
 
-	for(int i = 0; i < n; i++) for(int k = 0; k < n; k++) py_unit += A[1][k] * unit_vec[k];
+	for(int k = 0; k < n; k++) py_unit += A[1][k] * unit_vec[k];
 
-	// gauss laguerre (a = 2)
-	return pbar * py_unit * exp(pbar) / (exp(sqrt(mbar*mbar + pbar*pbar)) + (double)sign);
+	// gla (a = 2)
+	return pbar * py_unit * exp(pbar) / (exp(Eabar-bn*aBt)+a);
 }
 
 
-double modTtz_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, int sign)
+double modTtz_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign)
 {
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+
 	double cosphi = cos(M_PI*(1.0+xphi));
 	double sinphi = sin(M_PI*(1.0+xphi));
 	double sintheta = sqrt(1.0 - costheta * costheta);
@@ -379,78 +527,12 @@ double modTtz_integrand(double xphi, double costheta, double pbar, double ax, do
 	unit_vec[1] = ax * unit_vec[1];
 	unit_vec[2] = az * unit_vec[2];
 
-	for(int i = 0; i < n; i++) for(int k = 0; k < n; k++) pz_unit += A[2][k] * unit_vec[k];
+	for(int k = 0; k < n; k++) pz_unit += A[2][k] * unit_vec[k];
 
-	// gauss laguerre (a = 2)
-	return pbar * pz_unit * exp(pbar) / (exp(sqrt(mbar*mbar + pbar*pbar)) + (double)sign);
+	// gla (a = 2)
+	return pbar * pz_unit * exp(pbar) / (exp(Eabar-bn*aBt)+a);
 }
 
-
-
-
-
-
-
-
-
-
-// additional anisotropic integrands that appear
-// in jacobian of root finding algoritm
-/////////////////////////////////////////////////////////////////////////
-
-
-double I2001_integrand(double pbar, double ax, double az, double mbar, int sign)
-{
-	double Eabar = sqrt(pbar*pbar + mbar*mbar);
-	double qstat = exp(Eabar) + (double)sign;
-	// gauss laguerre (a = 3)
-	return Eabar * R200(pbar,ax,az,mbar) * exp(pbar+Eabar) / (qstat*qstat);
-}
-
-
-double I2011_integrand(double pbar, double ax, double az, double mbar, int sign)
-{
-	double Eabar = sqrt(pbar*pbar + mbar*mbar);
-	double qstat = exp(Eabar) + (double)sign;
-	// gauss laguerre (a = 3)
-	return Eabar * R201(pbar,ax,az,mbar) * exp(pbar+Eabar) / (qstat*qstat);
-}
-
-
-double I2201_integrand(double pbar, double ax, double az, double mbar, int sign)
-{
-	double Eabar = sqrt(pbar*pbar + mbar*mbar);
-	double qstat = exp(Eabar) + (double)sign;
-	// gauss laguerre (a = 3)
-	return Eabar * R220(pbar,ax,az,mbar) * exp(pbar+Eabar) / (qstat*qstat);
-}
-
-
-double I401m1_integrand(double pbar, double ax, double az, double mbar, int sign)
-{
-	double Eabar = sqrt(pbar*pbar + mbar*mbar);
-	double qstat = exp(Eabar) + (double)sign;
-	// gauss laguerre (a = 3)
-	return (pbar*pbar / Eabar) * R401(pbar,ax,az,mbar) * exp(pbar+Eabar) / (qstat*qstat);
-}
-
-
-double I420m1_integrand(double pbar, double ax, double az, double mbar, int sign)
-{
-	double Eabar = sqrt(pbar*pbar + mbar*mbar);
-	double qstat = exp(Eabar) + (double)sign;
-	// gauss laguerre (a = 3)
-	return (pbar*pbar / Eabar) * R420(pbar,ax,az,mbar) * exp(pbar+Eabar) / (qstat*qstat);
-}
-
-
-double I440m1_integrand(double pbar, double ax, double az, double mbar, int sign)
-{
-	double Eabar = sqrt(pbar*pbar + mbar*mbar);
-	double qstat = exp(Eabar) + (double)sign;
-	// gauss laguerre (a = 3)
-	return (pbar*pbar / Eabar) * R440(pbar,ax,az,mbar) * exp(pbar+Eabar) / (qstat*qstat);
-}
 
 
 

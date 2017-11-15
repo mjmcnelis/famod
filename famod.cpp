@@ -60,44 +60,39 @@ void free_2D(double ** M, int n)
 
 int main()
 {
-	//load hadron resonance gas particles' mass, degeneracy, baryon, sign
+	// set up hadron resonance gas particles' mass, degeneracy, baryon, sign
 	FILE *HRG;
 	stringstream resonances;
 	resonances << "pdg.dat";
 	HRG = fopen(resonances.str().c_str(),"r");
 
 	// pdg.dat contains (anti)mesons and baryons, but not antibaryons
-	// so add antibaryons manually
-	int N_mesons, N_baryons, N_antibaryons;
-	// read 1st line: number of mesons
-	fscanf(HRG, "%d", &N_mesons);
-	// read 2nd line: number of baryons
-	fscanf(HRG, "%d", &N_baryons);
+	// so had to add antibaryons manually
+	int N_mesons, N_baryons;
+	
+	fscanf(HRG, "%d", &N_mesons);	// read 1st line: number of mesons
+	fscanf(HRG, "%d", &N_baryons);	// read 2nd line: number of baryons
 
-	N_antibaryons = N_baryons;
-
-	// total number of resonances
-	int N_resonances = N_mesons + N_baryons + N_antibaryons;
+	int N_resonances = N_mesons + 2*N_baryons;	// total number of resonances
 
 	int particle_id;
 	char name[20];
-	double mass[N_resonances]; // file units = [GeV]
+	double mass[N_resonances]; // [GeV] units in file 
 	double width;
 	int degeneracy[N_resonances];
 	int baryon[N_resonances], strange, charm, bottom, isospin;
 	double charge;
 	int decays;
 
-	int m = 0; // antibaryon marker
+	int m = 0; // antibaryon data marker
 
 	// load data of mesons+baryons
 	for(int k = 0; k < N_mesons+N_baryons; k++)
 	{
 		fscanf(HRG, "%d %s %lf %lf %d %d %d %d %d %d %lf %d", &particle_id, name, &mass[k], &width, &degeneracy[k], &baryon[k], &strange, &charm, &bottom, &isospin, &charge, &decays);
 
-		if(baryon[k] == 1)
+		if(baryon[k] == 1)	// manually add antibaryon data at end of array
 		{
-			// manually add antibaryon data at end of array
 			mass[m+N_mesons+N_baryons] = mass[k];
 			degeneracy[m+N_mesons+N_baryons] = degeneracy[k];
 			baryon[m+N_mesons+N_baryons] = -1;
@@ -105,40 +100,36 @@ int main()
 		}
 	}
 
-	// sign array for bose/fermi distributions
-	int sign[N_resonances];
-	for(int k = 0; k < N_resonances; k++)
-	{
-		// degeneracy = 2*spin + 1
+	
+	int sign[N_resonances];				   // sign array for bose/fermi distributions
+	for(int k = 0; k < N_resonances; k++)  // degeneracy = 2*spin + 1
+	{		
 		if(degeneracy[k] % 2 == 0)
-			sign[k] = 1;  // fermions
+			sign[k] = 1;  				   // fermions
 		else if(degeneracy[k] % 2 == 1)
-			sign[k] = -1; // bosons
-		// convert resonance masses to fm^-1
-		mass[k] *= GEV_TO_INVERSE_FM;
-	}
+			sign[k] = -1; 				   // boson
 
+		mass[k] *= GEV_TO_INVERSE_FM;      // convert resonance masses to fm^-1
+	}
 
 	fclose(HRG);
 
 
 
-	//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	//  Set up the pbar roots/weights for anisotropic integrands
 
-
-	//  Set up the pbar roots/weights for:   Ea, PTa, PLa, pixx, pixy, Wxz, Wyz, Ttx, Tty, Ttyz (aT = 2)
-	//                                       I402m1, I421m1 (aR = 3)
-	//										 Na (aN = 1)
-	const int aT = 2; // associated Laguerre polynomials a = 2 for Ea, PTa, PLa and other T^munu components
-	const int aJ = 3; // associated Laguerre polynomials a = 3 for I402m1, I421m1
+	const int aN = 1; // gla (a = 1)
+	const int aT = 2; // gla (a = 2)
+	const int aJ = 3; // gla (a = 3)
+	
+	double * pbar_rootN = (double *)malloc(gla_pts * sizeof(double));
+	double * pbar_weightN = (double *)malloc(gla_pts * sizeof(double));
 	double * pbar_rootT = (double *)malloc(gla_pts * sizeof(double));
 	double * pbar_weightT = (double *)malloc(gla_pts * sizeof(double));
 	double * pbar_rootJ = (double *)malloc(gla_pts * sizeof(double));
 	double * pbar_weightJ = (double *)malloc(gla_pts * sizeof(double));
 
 
-
-	// Load gauss laguerre roots-weights
 	printf("Start loading gauss data...");
 	int num_error;
 	if((num_error = load_gauss_laguerre_data()) != 0)
@@ -149,16 +140,16 @@ int main()
 	printf("done\n\n");
 
 
-
 	// Set momentum bar roots-weights
 	for(int i = 0; i < gla_pts; i++)
 	{
+		pbar_rootN[i] = root_gla[aN][i];
+		pbar_weightN[i] = weight_gla[aN][i];
 		pbar_rootT[i] = root_gla[aT][i];
 		pbar_weightT[i] = weight_gla[aT][i];
 		pbar_rootJ[i] = root_gla[aJ][i];
 		pbar_weightJ[i] = weight_gla[aJ][i];
 	}
-
 
 
 	// Chebyshev root-weight generator (temporary)
@@ -219,56 +210,63 @@ int main()
 	//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	const double T = 0.155 * GEV_TO_INVERSE_FM;       // temperature in fm^-1
+	const double aB = 1.0;							  // chemical potential over temperature 
 	double ax = 1.0;
 	double az = 1.0;    // it's because of the rounding errors for ax ~ az
 	double lambda = T;
+	double aBt = aB; 
 	// double ax = 1.11875604453775;                           // alpha_perp
 	// double az = 0.752040817012744;                            // alpha_L
 	// double lambda = 0.156200599527327 * GEV_TO_INVERSE_FM;  // lambda in fm^-1
-	// convert resonance masses to fm^-1
-	//for(int k = 0; k < number_resonances; k++) mass[k] *= GEV_TO_INVERSE_FM;
 
 
-
-
-    // calculate hadron resonance gas equilibrium energy density and pressure
+    // Calculate equilibrium energy density, pressure and net baryon density of hadron resonance gas
 
 	double factEeq = pow(T,4) / (2.0*M_PI*M_PI);
 	double factPeq = pow(T,4) / (6.0*M_PI*M_PI);
+	double factnBeq = pow(T,3) / (2.0*M_PI*M_PI);
 
-	double Eeq = 0.0, Peq = 0.0;
+	double Eeq = 0.0;
+	double Peq = 0.0;
+	double nBeq = 0.0; 
 
 	double dof;
 
 	for(int k = 0; k < N_resonances; k++)
 	{
 		dof = (double)degeneracy[k];
-		Eeq += dof * factEeq * Gauss_Thermo_1D(Eeq_integrand, pbar_rootT, pbar_weightT, gla_pts, mass[k]/T, sign[k]);
-		Peq += dof * factPeq * Gauss_Thermo_1D(Peq_integrand, pbar_rootT, pbar_weightT, gla_pts, mass[k]/T, sign[k]);
+		Eeq += dof * factEeq * Gauss_Thermo_1D(Eeq_integrand, pbar_rootT, pbar_weightT, gla_pts, mass[k]/T, aB, baryon[k], sign[k]);
+		Peq += dof * factPeq * Gauss_Thermo_1D(Peq_integrand, pbar_rootT, pbar_weightT, gla_pts, mass[k]/T, aB, baryon[k], sign[k]);
+		if(baryon[k] != 0)
+			nBeq += dof * factnBeq * Gauss_Thermo_1D(nBeq_integrand, pbar_rootN, pbar_weightN, gla_pts, mass[k]/T, aB, baryon[k], sign[k]);
 	}
-	// are these reasonable values
+
 	printf("Hadron resonance gas:\n");
 	cout << "e = " << setprecision(15) << Eeq / GEV_TO_INVERSE_FM << " GeV/fm^3" << endl;
 	cout << "p = " << setprecision(15) << Peq / GEV_TO_INVERSE_FM << " GeV/fm^3" << endl;
+	cout << "nB = " << setprecision(15) << nBeq << " fm^-3" << endl;
 
 
-	// select the bulk pressure
+	// choose ahydro quantities
 	double e = Eeq;
-	double pt = 1.2 * Peq;
-	double pl = 0.6 * Peq;
+	double pt = 1.0 * Peq;
+	double pl = 1.0 * Peq;
+	double nB = nBeq; 
 
 	cout << "e = " << setprecision(15) << Eeq << endl;
 	cout << "pt = " << setprecision(15) << pt << endl;
 	cout << "pl = " << setprecision(15) << pl << endl;
+	cout << "nB = " << setprecision(15) << nB << endl;
 
-	// there's some bug in the code at this step.
+	// bug if isotropic pressures: pt = pl
+	find_anisotropic_variables(e, pl, pt, nB, mass, degeneracy, sign, N_resonances, pbar_rootT, pbar_weightT, pbar_rootJ, pbar_weightJ, gla_pts, &lambda, &ax, &az);
 
-	find_anisotropic_variables(e, pl, pt, mass, degeneracy, sign, N_resonances, pbar_rootT, pbar_weightT, pbar_rootJ, pbar_weightJ, gla_pts, &lambda, &ax, &az);
-
-	cout << T / GEV_TO_INVERSE_FM << endl;
-	cout << lambda / GEV_TO_INVERSE_FM << endl;
-	cout << ax << endl;
-	cout << az << endl;
+	cout << "T = " << T / GEV_TO_INVERSE_FM << " GeV" << endl;
+	cout << "lambda = " << lambda / GEV_TO_INVERSE_FM << " GeV" << endl;
+	cout << "ax = " << ax << endl;
+	cout << "az = " << az << endl;
+	cout << "aB = " << aB << endl; 
+	cout << "aBt = " << aBt << endl; 
 
 	// mbar = mass / lambda
 	double mbar[N_resonances];
@@ -279,33 +277,41 @@ int main()
 	double factEa = pow(ax,2) * pow(az,1) * pow(lambda,4) / (4.0*M_PI*M_PI);
 	double factPTa = pow(ax,4) * pow(az,1) * pow(lambda,4) / (8.0*M_PI*M_PI);
 	double factPLa = pow(ax,2) * pow(az,3) * pow(lambda,4) / (4.0*M_PI*M_PI);
+	double factnBa = pow(ax,2) * pow(az,1) * pow(lambda,3) / (2.0*M_PI*M_PI);      
 	double factI402m1 = pow(ax,6) * pow(az,1) * pow(lambda,5) / (32.0*M_PI*M_PI);
 	double factI421m1 = pow(ax,4) * pow(az,3) * pow(lambda,5) / (8.0*M_PI*M_PI);
 
 
-	double Ea = 0.0, PTa = 0.0, PLa = 0.0, I402m1 = 0.0, I421m1 = 0.0;
+	double Ea = 0.0;
+	double PTa = 0.0;
+	double PLa = 0.0;
+	double nBa = 0.0; 
+	double I402m1 = 0.0;
+	double I421m1 = 0.0;
 
 	// sum over all resonances
 	for(int k = 0; k < N_resonances; k++)
 	{
 		dof = (double)degeneracy[k];
-		Ea += dof * factEa * Gauss_Aniso_1D(Ea_integrand, pbar_rootT, pbar_weightT, gla_pts, ax, az, mbar[k], sign[k]);
-		PTa += dof * factPTa * Gauss_Aniso_1D(PTa_integrand, pbar_rootT, pbar_weightT, gla_pts, ax, az, mbar[k], sign[k]);
-		PLa += dof * factPLa * Gauss_Aniso_1D(PLa_integrand, pbar_rootT, pbar_weightT, gla_pts, ax, az, mbar[k], sign[k]);
-		I402m1 += dof * factI402m1 * Gauss_Aniso_1D(I402m1_integrand, pbar_rootJ, pbar_weightJ, gla_pts, ax, az, mbar[k], sign[k]);
-		I421m1 += dof * factI421m1 * Gauss_Aniso_1D(I421m1_integrand, pbar_rootJ, pbar_weightJ, gla_pts, ax, az, mbar[k], sign[k]);
+		Ea += dof * factEa * Gauss_Aniso_1D(Ea_integrand, pbar_rootT, pbar_weightT, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);
+		PTa += dof * factPTa * Gauss_Aniso_1D(PTa_integrand, pbar_rootT, pbar_weightT, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);
+		PLa += dof * factPLa * Gauss_Aniso_1D(PLa_integrand, pbar_rootT, pbar_weightT, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);
+		I402m1 += dof * factI402m1 * Gauss_Aniso_1D(I402m1_integrand, pbar_rootJ, pbar_weightJ, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);
+		I421m1 += dof * factI421m1 * Gauss_Aniso_1D(I421m1_integrand, pbar_rootJ, pbar_weightJ, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);
+		if(baryon[k] != 0)
+			nBa += dof * factnBa * Gauss_Aniso_1D(nBa_integrand, pbar_rootN, pbar_weightN, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);
 	}
 
-	cout << "e = " << Ea << endl;
-	cout << "pt = " << PTa << endl;
-	cout << "pl = " << PLa << endl;
+	cout << "Ea = " << Ea << endl;
+	cout << "PTa = " << PTa << endl;
+	cout << "PLa = " << PLa << endl;
+	cout << "nBa = " << nBa << endl;
 
 	// order of magnitude relations
-	double pi_order = I402m1 / (ax * ax * lambda * PTa);
-	double W_order = (ax+az) / sqrt(2.0*ax*az) * I421m1 / (ax * az * lambda * sqrt(PLa*PTa));
+	//double pi_order = I402m1 / (ax * ax * lambda * PTa);
+	//double W_order = (ax+az) / sqrt(2.0*ax*az) * I421m1 / (ax * az * lambda * sqrt(PLa*PTa));
 	// piperp << pi_order * PTa
 	// Wperp << W_order * sqrt(PLa * PTa)
-
 	//cout << "pi_order: " << setprecision(15) << pi_order << endl;
 	//cout << "W_order:  " << W_order << endl;
 
@@ -377,8 +383,17 @@ int main()
 	double factmodTty =  factor;
 	double factmodTtz =  factor;
 
-	double modEa = 0.0, modPTa = 0.0, modPLa = 0.0, modpixx = 0.0, modpixy = 0.0,
-	modWxz = 0.0, modWyz = 0.0, modTtx = 0.0, modTty = 0.0, modTtz = 0.0;
+	double modEa = 0.0;
+	double modPTa = 0.0;
+	double modPLa = 0.0;
+	double modnBa = 0.0; 
+	double modpixx = 0.0;
+	double modpixy = 0.0;
+	double modWxz = 0.0;
+	double modWyz = 0.0;
+	double modTtx = 0.0;
+	double modTty = 0.0;
+	double modTtz = 0.0;
 
 
 	// Compute modification outputs (sum over resonances)
@@ -386,25 +401,28 @@ int main()
 	{
 		dof = (double)degeneracy[k];
 
-		modEa += dof * factmodEa * Gauss_Mod_Aniso_3D(modEa_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], sign[k]);
+		if(baryon[k] != 0)
+			modnBa += dof * factornBa;  // add in later
 
-		modPTa += dof * factmodPTa * Gauss_Mod_Aniso_3D(modPTa_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], sign[k]);
+		modEa += dof * factmodEa * Gauss_Mod_Aniso_3D(modEa_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], aBt, baryon[k], sign[k]);
 
-		modPLa += dof * factmodPLa * Gauss_Mod_Aniso_3D(modPLa_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], sign[k]);
+		modPTa += dof * factmodPTa * Gauss_Mod_Aniso_3D(modPTa_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], aBt, baryon[k], sign[k]);
 
-		modpixx += dof * factmodpixx * Gauss_Mod_Aniso_3D(modpixx_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], sign[k]);
+		modPLa += dof * factmodPLa * Gauss_Mod_Aniso_3D(modPLa_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], aBt, baryon[k], sign[k]);
 
-		modpixy += dof * factmodpixy * Gauss_Mod_Aniso_3D(modpixy_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], sign[k]);
+		modpixx += dof * factmodpixx * Gauss_Mod_Aniso_3D(modpixx_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], aBt, baryon[k], sign[k]);
 
-		modWxz += dof * factmodWxz * Gauss_Mod_Aniso_3D(modWxz_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], sign[k]);
+		modpixy += dof * factmodpixy * Gauss_Mod_Aniso_3D(modpixy_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], aBt, baryon[k], sign[k]);
 
-		modWyz += dof * factmodWyz * Gauss_Mod_Aniso_3D(modWyz_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], sign[k]);
+		modWxz += dof * factmodWxz * Gauss_Mod_Aniso_3D(modWxz_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], aBt, baryon[k], sign[k]);
 
-		modTtx += dof * factmodTtx * Gauss_Mod_Aniso_3D(modTtx_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], sign[k]);
+		modWyz += dof * factmodWyz * Gauss_Mod_Aniso_3D(modWyz_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], aBt, baryon[k], sign[k]);
 
-		modTty += dof * factmodTty * Gauss_Mod_Aniso_3D(modTty_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], sign[k]);
+		modTtx += dof * factmodTtx * Gauss_Mod_Aniso_3D(modTtx_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], aBt, baryon[k], sign[k]);
 
-		modTtz += dof * factmodTtz * Gauss_Mod_Aniso_3D(modTtz_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], sign[k]);
+		modTty += dof * factmodTty * Gauss_Mod_Aniso_3D(modTty_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], aBt, baryon[k], sign[k]);
+
+		modTtz += dof * factmodTtz * Gauss_Mod_Aniso_3D(modTtz_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], aBt, baryon[k], sign[k]);
 	}
 
 
