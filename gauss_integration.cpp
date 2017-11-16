@@ -18,26 +18,24 @@
 
 
 // for thermal equilibrium functions
-double Gauss_Thermo_1D(double thermal_1D_integrand(double pbar, double mbar, int sign), double * pbar_root, double * pbar_weight, int pbar_pts, double mbar, int sign)
+double Gauss_Thermo_1D(double thermal_1D_integrand(double pbar, double mbar, double aB, int baryon, int sign), double * pbar_root, double * pbar_weight, int pbar_pts, double mbar, double aB, int baryon, int sign)
 {
 	double sum = 0.0;
-	for(int k = 0; k < pbar_pts; k++) sum += pbar_weight[k] * thermal_1D_integrand(pbar_root[k], mbar, sign);
+	for(int k = 0; k < pbar_pts; k++) sum += pbar_weight[k] * thermal_1D_integrand(pbar_root[k], mbar, aB, baryon, sign);
 	return sum;
 }
 
 
 
-double Gauss_Aniso_1D(double aniso_1D_integrand(double pbar, double ax, double az, double mbar, int sign), double * pbar_root, double * pbar_weight, int pbar_pts, double ax, double az, double mbar, int sign)
+double Gauss_Aniso_1D(double aniso_1D_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign), double * pbar_root, double * pbar_weight, int pbar_pts, double ax, double az, double mbar, double aBt, int baryon, int sign)
 {
 	double sum = 0.0;
-	for(int k = 0; k < pbar_pts; k++) sum += pbar_weight[k] * aniso_1D_integrand(pbar_root[k], ax, az, mbar, sign);
+	for(int k = 0; k < pbar_pts; k++) sum += pbar_weight[k] * aniso_1D_integrand(pbar_root[k], ax, az, mbar, aBt, baryon, sign);
 	return sum;
 }
 
 
-
-// only for testing 3D integration: precursor for the mod version
-double gauss_test_aniso_3D(double test_aniso_3D_integrand(double xphi, double costheta, double pbar, double ax, double az, double mbar, int sign), double * xphi_root, double * xphi_weight, double * costheta_root, double * costheta_weight, double * pbar_root, double * pbar_weight, int xphi_pts, int costheta_pts, int pbar_pts, double ax, double az, double mbar, int sign)
+double Gauss_Mod_Aniso_3D(double mod_aniso_3D_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign), double * xphi_root, double * xphi_weight, double * costheta_root, double * costheta_weight, double * pbar_root, double * pbar_weight, int xphi_pts, int costheta_pts, int pbar_pts, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign)
 {
 	double sum = 0.0;
 	for(int i = 0; i < xphi_pts; i++)
@@ -46,24 +44,7 @@ double gauss_test_aniso_3D(double test_aniso_3D_integrand(double xphi, double co
 		{
 			for(int k = 0; k < pbar_pts; k++)
 			{
-				sum += xphi_weight[i] * costheta_weight[j] * pbar_weight[k] * test_aniso_3D_integrand(xphi_root[i], costheta_root[j], pbar_root[k], ax, az, mbar, sign);
-			}
-		}
-	}
-	return sum;
-}
-
-
-double Gauss_Mod_Aniso_3D(double mod_aniso_3D_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, int sign), double * xphi_root, double * xphi_weight, double * costheta_root, double * costheta_weight, double * pbar_root, double * pbar_weight, int xphi_pts, int costheta_pts, int pbar_pts, double ax, double az, double ** A, int n, double mbar, int sign)
-{
-	double sum = 0.0;
-	for(int i = 0; i < xphi_pts; i++)
-	{
-		for(int j = 0; j < costheta_pts; j++)
-		{
-			for(int k = 0; k < pbar_pts; k++)
-			{
-				sum += xphi_weight[i] * costheta_weight[j] * pbar_weight[k] * mod_aniso_3D_integrand(xphi_root[i], costheta_root[j], pbar_root[k], ax, az, A, n, mbar, sign);
+				sum += xphi_weight[i] * costheta_weight[j] * pbar_weight[k] * mod_aniso_3D_integrand(xphi_root[i], costheta_root[j], pbar_root[k], ax, az, A, n, mbar, aBt, baryon, sign);
 			}
 		}
 	}

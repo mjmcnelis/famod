@@ -16,7 +16,7 @@ double nBeq_integrand(double pbar, double mbar, double aB, int baryon, int sign)
 }
 
 // equilibrium energy density
-double Eeq_integrand(double pbar, double mbar, double alphaB, int baryon, int sign)
+double Eeq_integrand(double pbar, double mbar, double aB, int baryon, int sign)
 {
 	double Ebar = sqrt(pbar*pbar + mbar*mbar);
 	double a = (double)sign;
@@ -26,7 +26,7 @@ double Eeq_integrand(double pbar, double mbar, double alphaB, int baryon, int si
 }
 
 // equilibrium pressure
-double Peq_integrand(double pbar, double mbar, double alphaB, int baryon, int sign)
+double Peq_integrand(double pbar, double mbar, double aB, int baryon, int sign)
 {
 	double Ebar = sqrt(pbar*pbar + mbar*mbar);
 	double a = (double)sign;
@@ -85,6 +85,15 @@ double PLa_integrand(double pbar, double ax, double az, double mbar, double aBt,
 	return pbar * R220(pbar,ax,az,mbar) * exp(pbar) / (exp(Eabar-bn*aBt)+a);
 }
 
+double bn_I1001_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 2)
+	return bn * Eabar * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
+}
 
 double bn2_I1000_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
 {
@@ -119,7 +128,7 @@ double bn_I2010_integrand(double pbar, double ax, double az, double mbar, double
 }
 
 
-double I2201_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+double bn_I2200_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
 {
 	double Eabar = sqrt(pbar*pbar + mbar*mbar);
 	double a = (double)sign;
@@ -145,7 +154,7 @@ double I402m1_integrand(double pbar, double ax, double az, double mbar, double a
 
 double I421m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
 {
-	double Esbar = sqrt(pbar*pbar + mbar*mbar);
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
 	double a = (double)sign;
 	double bn = (double)baryon;
 	double qstat = exp(Eabar-bn*aBt)+a;

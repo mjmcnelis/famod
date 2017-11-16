@@ -20,7 +20,7 @@ using namespace std;
 
 // temporary
 const int a = 21;
-const int gla_pts = 32;
+const int gla_pts = 64;
 double root_gla[a][gla_pts];
 double weight_gla[a][gla_pts];
 
@@ -156,7 +156,7 @@ int main()
 
 	// phi = M_PI * (1 + xphi)        (variable substitution)
 
-	const int Ncheby = 32;
+	const int Ncheby = 64;
 
 	double * cheby_root = (double *)malloc((Ncheby+1) * sizeof(double));
 	double * cheby_weight = (double *)malloc((Ncheby+1) * sizeof(double));
@@ -210,13 +210,13 @@ int main()
 	//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	const double T = 0.155 * GEV_TO_INVERSE_FM;       // temperature in fm^-1
-	const double aB = 1.0;							  // chemical potential over temperature 
+	const double aB = 1.6;							  // chemical potential over temperature 
 	double ax = 1.0;
 	double az = 1.0;    // it's because of the rounding errors for ax ~ az
 	double lambda = T;
 	double aBt = aB; 
 	// double ax = 1.11875604453775;                           // alpha_perp
-	// double az = 0.752040817012744;                            // alpha_L
+	// double az = 0.752040817012744;                          // alpha_L
 	// double lambda = 0.156200599527327 * GEV_TO_INVERSE_FM;  // lambda in fm^-1
 
 
@@ -238,7 +238,9 @@ int main()
 		Eeq += dof * factEeq * Gauss_Thermo_1D(Eeq_integrand, pbar_rootT, pbar_weightT, gla_pts, mass[k]/T, aB, baryon[k], sign[k]);
 		Peq += dof * factPeq * Gauss_Thermo_1D(Peq_integrand, pbar_rootT, pbar_weightT, gla_pts, mass[k]/T, aB, baryon[k], sign[k]);
 		if(baryon[k] != 0)
+		{
 			nBeq += dof * factnBeq * Gauss_Thermo_1D(nBeq_integrand, pbar_rootN, pbar_weightN, gla_pts, mass[k]/T, aB, baryon[k], sign[k]);
+		}
 	}
 
 	printf("Hadron resonance gas:\n");
@@ -249,24 +251,28 @@ int main()
 
 	// choose ahydro quantities
 	double e = Eeq;
-	double pt = 1.0 * Peq;
+	double pt = 1.1 * Peq;
 	double pl = 1.0 * Peq;
 	double nB = nBeq; 
 
-	cout << "e = " << setprecision(15) << Eeq << endl;
-	cout << "pt = " << setprecision(15) << pt << endl;
-	cout << "pl = " << setprecision(15) << pl << endl;
-	cout << "nB = " << setprecision(15) << nB << endl;
+	printf("\nAnisotropic hydro input:\n");
+	cout << "e_a = " << setprecision(15) << Eeq << endl;
+	cout << "pt_a = " << setprecision(15) << pt << endl;
+	cout << "pl_a = " << setprecision(15) << pl << endl;
+	cout << "nB_a = " << setprecision(15) << nB << endl;
+	printf("\n");
 
 	// bug if isotropic pressures: pt = pl
-	find_anisotropic_variables(e, pl, pt, nB, mass, degeneracy, sign, N_resonances, pbar_rootT, pbar_weightT, pbar_rootJ, pbar_weightJ, gla_pts, &lambda, &ax, &az);
+	find_anisotropic_variables(e, pl, pt, nB, mass, degeneracy, baryon, sign, N_resonances, pbar_rootN, pbar_weightN, pbar_rootT, pbar_weightT, pbar_rootJ, pbar_weightJ, gla_pts, &lambda, &ax, &az, &aBt);
 
-	cout << "T = " << T / GEV_TO_INVERSE_FM << " GeV" << endl;
+	printf("\nThermodynamic variables:\n");
+	cout << "T = " << setprecision(5) << T / GEV_TO_INVERSE_FM << " GeV" << endl;
+	cout << "aB = " << setprecision(5) << aB << endl; 
+	printf("\nAnisotropic variables:\n");
 	cout << "lambda = " << lambda / GEV_TO_INVERSE_FM << " GeV" << endl;
-	cout << "ax = " << ax << endl;
-	cout << "az = " << az << endl;
-	cout << "aB = " << aB << endl; 
-	cout << "aBt = " << aBt << endl; 
+	cout << "ax = " << setprecision(8) << ax << endl;
+	cout << "az = " << setprecision(8) << az << endl;
+	cout << "aBt = " << setprecision(5) << aBt << endl; 
 
 	// mbar = mass / lambda
 	double mbar[N_resonances];
@@ -302,10 +308,11 @@ int main()
 			nBa += dof * factnBa * Gauss_Aniso_1D(nBa_integrand, pbar_rootN, pbar_weightN, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);
 	}
 
-	cout << "Ea = " << Ea << endl;
-	cout << "PTa = " << PTa << endl;
-	cout << "PLa = " << PLa << endl;
-	cout << "nBa = " << nBa << endl;
+	printf("\nAnisotropic hydro output:\n");
+	cout << "Ea = " << setprecision(15) << Ea << endl;
+	cout << "PTa = " << setprecision(15) << PTa << endl;
+	cout << "PLa = " << setprecision(15) << PLa << endl;
+	cout << "nBa = " << setprecision(15) << nBa << endl;
 
 	// order of magnitude relations
 	//double pi_order = I402m1 / (ax * ax * lambda * PTa);
@@ -402,7 +409,7 @@ int main()
 		dof = (double)degeneracy[k];
 
 		if(baryon[k] != 0)
-			modnBa += dof * factornBa;  // add in later
+			modnBa += dof * factnBa * Gauss_Aniso_1D(nBa_integrand, pbar_rootN, pbar_weightN, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);  
 
 		modEa += dof * factmodEa * Gauss_Mod_Aniso_3D(modEa_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], aBt, baryon[k], sign[k]);
 
@@ -434,6 +441,10 @@ int main()
 
 
 	// print input/output results for comparison
+
+	printf("\n");
+
+	cout << setprecision(4) << "nB:        " << nBa << "         " << setprecision(3) << (modnBa / nBa - 1.0) * 100 << " % error" << "\n" << "modnBa:     " << setprecision(4) << modnBa << endl;
 
 	printf("\n");
 
@@ -526,6 +537,8 @@ int main()
 
 	printf("Freeing memory...");
 
+	free(pbar_rootN);
+	free(pbar_weightN);
 	free(pbar_rootT);
 	free(pbar_weightT);
 	free(pbar_rootJ);
