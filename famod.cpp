@@ -20,7 +20,7 @@ using namespace std;
 
 // temporary
 const int a = 21;
-const int gla_pts = 64;
+const int gla_pts = 32;
 double root_gla[a][gla_pts];
 double weight_gla[a][gla_pts];
 
@@ -156,7 +156,7 @@ int main()
 
 	// phi = M_PI * (1 + xphi)        (variable substitution)
 
-	const int Ncheby = 64;
+	const int Ncheby = 32;
 
 	double * cheby_root = (double *)malloc((Ncheby+1) * sizeof(double));
 	double * cheby_weight = (double *)malloc((Ncheby+1) * sizeof(double));
@@ -209,7 +209,7 @@ int main()
 	//                                                       ::
 	//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-	const double T = 0.155 * GEV_TO_INVERSE_FM;       // temperature in fm^-1
+	const double T = 0.135 * GEV_TO_INVERSE_FM;       // temperature in fm^-1
 	const double aB = 1.6;							  // chemical potential over temperature 
 	double ax = 1.0;
 	double az = 1.0;    // it's because of the rounding errors for ax ~ az

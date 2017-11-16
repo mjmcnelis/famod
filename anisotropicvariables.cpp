@@ -170,7 +170,7 @@ void find_anisotropic_variables(double e, double pl, double pt, double nB, doubl
 	const double PLa = pl;
 	const double nBa = nB;  // make it number 4
 
-	double dof = 0.0;
+	double dof;
 
 	double lambdai = *lambda;			                     // initial guess for anisotropic variables
 	double axi = *ax;
@@ -364,7 +364,8 @@ void find_anisotropic_variables(double e, double pl, double pt, double nB, doubl
 		    {
 		    	bn_I2000 += dof * factorEai * Gauss_Aniso_1D(bn_I2000_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]); 
 		    	bn_I2010 += dof * factorPTai * Gauss_Aniso_1D(bn_I2010_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]); 
-		    	bn_I2200 += dof * factorPLai * Gauss_Aniso_1D(bn_I2200_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]); 
+		    	bn_I2200 += dof * factorPLai * Gauss_Aniso_1D(bn_I2200_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]);
+		    	 
 		    	bn_I1001 += dof * factornBai * Gauss_Aniso_1D(bn_I1001_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]);
 		    	bn2_I1000 += dof * factornBai * Gauss_Aniso_1D(bn2_I1000_integrand, pbar_rootN, pbar_weightN, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]);
 		    }

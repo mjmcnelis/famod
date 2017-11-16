@@ -102,7 +102,7 @@ double bn2_I1000_integrand(double pbar, double ax, double az, double mbar, doubl
 	double bn = (double)baryon;
 	double qstat = exp(Eabar-bn*aBt)+a;
 	// gla (a = 1)
-	return bn*bn * pbar * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
+	return bn * bn * pbar * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
 }
 
 
@@ -115,7 +115,6 @@ double bn_I2000_integrand(double pbar, double ax, double az, double mbar, double
 	// gla (a = 2)
 	return bn * pbar * R200(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
 }
-
 
 double bn_I2010_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
 {
