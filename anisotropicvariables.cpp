@@ -245,7 +245,7 @@ void find_anisotropic_variables(double e, double pl, double pt, double nB, doubl
 
 
 	int i = 0;				  // starting ith iteration
-	int Nmax = 1000;			  // max number of iterations
+	int Nmax = 100;			  // max number of iterations
 	double dXnorm2;           // L2-norm of dX iteration
 	double Fnorm2;		      // L2-norm of F
 	double tolX = 1.0e-6;    // tolerance for X
@@ -441,6 +441,8 @@ void find_anisotropic_variables(double e, double pl, double pt, double nB, doubl
    	 	axi = X[1];
     	azi = X[2];
     	aBti = X[3];
+
+    	//printf("%f\n",lambdai);
 
 		i++;
 

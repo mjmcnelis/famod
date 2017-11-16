@@ -105,7 +105,7 @@ int main()
 	for(int k = 0; k < N_resonances; k++)  // degeneracy = 2*spin + 1
 	{		
 		if(degeneracy[k] % 2 == 0)
-			sign[k] = 1;  				   // fermions
+			sign[k] = 1;  				   // fermion
 		else if(degeneracy[k] % 2 == 1)
 			sign[k] = -1; 				   // boson
 
@@ -209,12 +209,12 @@ int main()
 	//                                                       ::
 	//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-	const double T = 0.135 * GEV_TO_INVERSE_FM;       // temperature in fm^-1
-	const double aB = 1.6;							  // chemical potential over temperature 
-	double ax = 1.0;
-	double az = 1.0;    // it's because of the rounding errors for ax ~ az
-	double lambda = T;
-	double aBt = aB; 
+	const double T = 0.155 * GEV_TO_INVERSE_FM;       // temperature in fm^-1
+	const double aB = 2.0;							  // chemical potential over temperature 
+	double ax = 0.9;
+	double az = 1.1;    // it's because of the rounding errors for ax ~ az
+	double lambda = 0.16 * GEV_TO_INVERSE_FM;
+	double aBt = 1.9; 
 	// double ax = 1.11875604453775;                           // alpha_perp
 	// double az = 0.752040817012744;                          // alpha_L
 	// double lambda = 0.156200599527327 * GEV_TO_INVERSE_FM;  // lambda in fm^-1
@@ -243,6 +243,28 @@ int main()
 		}
 	}
 
+
+	// printf("Calculate proton energy density contribution\n");
+	// double mass_p = 0.938 * GEV_TO_INVERSE_FM; 
+	// double degeneracy_p = 2.0; 
+
+	// double Ep_numerical = degeneracy_p * factEeq * Gauss_Thermo_1D(Eeq_integrand, pbar_rootT, pbar_weightT, gla_pts, mass_p/T, aB, 1, 1);
+
+	// double Ep_series = 0.0;
+	// double prefactor;
+	// int imax = 3; 
+	// printf("Proton energy series:\n");
+	// for(int i = 1; i < imax; i++)
+	// {
+	// 	prefactor = degeneracy_p * pow(-1.0,i+1) * exp((double)i*aB) * factEeq / pow((double)i,4);
+
+	// 	Ep_series += prefactor * Gauss_Thermo_1D(Eeq_integrand, pbar_rootT, pbar_weightT, gla_pts, (double)i*mass_p/T, aB, 0, 0); 
+	// 	printf("%f\n", Ep_series); 
+	// }
+	// cout << "Proton energy series =    " << setprecision(15) <<  Ep_series << endl;
+	// cout << "Proton energy numerical = " << setprecision(15) << Ep_numerical << "\n" << endl;
+
+
 	printf("Hadron resonance gas:\n");
 	cout << "e = " << setprecision(15) << Eeq / GEV_TO_INVERSE_FM << " GeV/fm^3" << endl;
 	cout << "p = " << setprecision(15) << Peq / GEV_TO_INVERSE_FM << " GeV/fm^3" << endl;
@@ -251,8 +273,8 @@ int main()
 
 	// choose ahydro quantities
 	double e = Eeq;
-	double pt = 1.1 * Peq;
-	double pl = 1.0 * Peq;
+	double pt = 0.9 * Peq;
+	double pl = 1.1 * Peq;
 	double nB = nBeq; 
 
 	printf("\nAnisotropic hydro input:\n");
@@ -305,7 +327,9 @@ int main()
 		I402m1 += dof * factI402m1 * Gauss_Aniso_1D(I402m1_integrand, pbar_rootJ, pbar_weightJ, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);
 		I421m1 += dof * factI421m1 * Gauss_Aniso_1D(I421m1_integrand, pbar_rootJ, pbar_weightJ, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);
 		if(baryon[k] != 0)
+		{
 			nBa += dof * factnBa * Gauss_Aniso_1D(nBa_integrand, pbar_rootN, pbar_weightN, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);
+		}
 	}
 
 	printf("\nAnisotropic hydro output:\n");
@@ -409,7 +433,9 @@ int main()
 		dof = (double)degeneracy[k];
 
 		if(baryon[k] != 0)
+		{
 			modnBa += dof * factnBa * Gauss_Aniso_1D(nBa_integrand, pbar_rootN, pbar_weightN, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);  
+		}
 
 		modEa += dof * factmodEa * Gauss_Mod_Aniso_3D(modEa_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], aBt, baryon[k], sign[k]);
 
