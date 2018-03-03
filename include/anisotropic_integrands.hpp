@@ -22,8 +22,8 @@ double I421m1_integrand(double pbar, double ax, double az, double mbar, double a
 double I2001_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
 double I2011_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
 double I2201_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
-//double I401m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
-//double I420m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
+double I401m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
+double I420m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
 double I440m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
 
 double bn_I1001_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
@@ -31,6 +31,9 @@ double bn2_I1000_integrand(double pbar, double ax, double az, double mbar, doubl
 double bn_I2000_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
 double bn_I2010_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
 double bn_I2200_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
+
+double bn_I301m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
+double bn_I320m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign);
 
 double modEa_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign);
 double modPTa_integrand(double xphi, double costheta, double pbar, double ax, double az, double ** A, int n, double mbar, double aBt, int baryon, int sign);

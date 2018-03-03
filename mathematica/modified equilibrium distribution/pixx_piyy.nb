@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       157,          7]
-NotebookDataLength[     26130,        660]
-NotebookOptionsPosition[     25794,        643]
-NotebookOutlinePosition[     26151,        659]
-CellTagsIndexPosition[     26108,        656]
+NotebookDataLength[     25759,        648]
+NotebookOptionsPosition[     25423,        631]
+NotebookOutlinePosition[     25780,        647]
+CellTagsIndexPosition[     25737,        644]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -614,18 +614,6 @@ Tr8AQo9JSg==
     "\"\\!\\(\\*FractionBox[\\(\\*SubsuperscriptBox[\\(T\\), \\(xx\\), \
 \\((in)\\)] - \\*SubsuperscriptBox[\\(T\\), \\(yy\\), \\((in)\\)]\\), \\(2 \
 \\*SubscriptBox[\\(P\\), \\(eq\\)]\\)]\\)\"", TraditionalForm]},
-  FrameStyle->{
-    Directive[
-     GrayLevel[0], FontSize -> 20, FontFamily -> "Times", 
-     AbsoluteThickness[1]], 
-    Directive[
-     GrayLevel[0], FontSize -> 20, FontFamily -> "Times", 
-     AbsoluteThickness[1]]},
-  FrameTicksStyle->{
-    Directive[
-     GrayLevel[0], FontSize -> 20, FontFamily -> "Times"], 
-    Directive[
-     GrayLevel[0], FontSize -> 20, FontFamily -> "Times"]},
   ImageSize->{600, 500},
   PlotLabel->FormBox[
     StyleBox[
@@ -638,11 +626,11 @@ MeV)\"", FontSize -> 24, StripOnInput -> False], TraditionalForm],
  CellChangeTimes->{{3.7157890350817823`*^9, 3.7157891514561453`*^9}, {
    3.7157891993506927`*^9, 3.715789264568131*^9}, 3.71578930639925*^9, {
    3.715789349648261*^9, 3.715789353561304*^9}, {3.715789418313919*^9, 
-   3.7157894295640383`*^9}}]
+   3.7157894295640383`*^9}, 3.720628800244038*^9}]
 }, Open  ]]
 },
 WindowSize->{1216, 795},
-WindowMargins->{{87, Automatic}, {-51, Automatic}},
+WindowMargins->{{Automatic, -121}, {Automatic, 0}},
 FrontEndVersion->"8.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (August 26, \
 2012)",
 StyleDefinitions->"Default.nb"
@@ -660,7 +648,7 @@ CellTagsIndex->{}
 Notebook[{
 Cell[CellGroupData[{
 Cell[579, 22, 13895, 334, 838, "Input"],
-Cell[14477, 358, 11301, 282, 515, "Output"]
+Cell[14477, 358, 10930, 270, 515, "Output"]
 }, Open  ]]
 }
 ]

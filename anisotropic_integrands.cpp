@@ -5,7 +5,7 @@
 #include "rfunctions.hpp"
 
 
-// equilibrium net baryon density 
+// equilibrium net baryon density
 double nBeq_integrand(double pbar, double mbar, double aB, int baryon, int sign)
 {
 	double Ebar = sqrt(pbar*pbar + mbar*mbar);
@@ -139,6 +139,26 @@ double bn_I2200_integrand(double pbar, double ax, double az, double mbar, double
 
 
 
+double bn_I301m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 2)
+	return bn * pbar * pbar / Eabar * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
+}
+
+double bn_I320m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 2)
+	return bn * pbar * pbar / Eabar * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
+}
+
 double I402m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
 {
 	double Eabar = sqrt(pbar*pbar + mbar*mbar);
@@ -195,26 +215,26 @@ double I2201_integrand(double pbar, double ax, double az, double mbar, double aB
 }
 
 
-// double I401m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
-// {
-// 	double Eabar = sqrt(pbar*pbar + mbar*mbar);
-// 	double a = (double)sign;
-// 	double bn = (double)baryon;
-// 	double qstat = exp(Eabar-bn*aBt)+a;
-// 	// gla (a = 3)
-// 	return (pbar*pbar / Eabar) * R401(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
-// }
+double I401m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 3)
+	return (pbar*pbar / Eabar) * R401(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
+}
 
 
-// double I420m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
-// {
-// 	double Eabar = sqrt(pbar*pbar + mbar*mbar);
-// 	double a = (double)sign;
-// 	double bn = (double)baryon;
-// 	double qstat = exp(Eabar-bn*aBt)+a;
-// 	// gla (a = 3)
-// 	return (pbar*pbar / Eabar) * R420(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
-// }
+double I420m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)
+{
+	double Eabar = sqrt(pbar*pbar + mbar*mbar);
+	double a = (double)sign;
+	double bn = (double)baryon;
+	double qstat = exp(Eabar-bn*aBt)+a;
+	// gla (a = 3)
+	return (pbar*pbar / Eabar) * R420(pbar,ax,az,mbar) * exp(pbar+Eabar-bn*aBt)/(qstat*qstat);
+}
 
 
 double I440m1_integrand(double pbar, double ax, double az, double mbar, double aBt, int baryon, int sign)

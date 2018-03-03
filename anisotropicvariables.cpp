@@ -209,11 +209,14 @@ void find_anisotropic_variables(double e, double pl, double pt, double nB, doubl
 
   	double factorI401m1;
   	double factorI420m1;
-  	double factorI402m1; 
+  	double factorI402m1;
   	double factorI421m1;
   	double factorI440m1;
 
   	double factornBai;
+
+  	double factorI301m1;
+  	double factorI320m1;
 
 
 	// anisotropic functions evaluated at ith iteration of X
@@ -238,9 +241,12 @@ void find_anisotropic_variables(double e, double pl, double pt, double nB, doubl
 	double bn_I2200;
 
 	double bn_I1001;
-	double bn2_I1000; 
+	double bn2_I1000;
 
-	
+	double bn_I301m1;
+	double bn_I320m1;
+
+
 
 
 
@@ -272,8 +278,8 @@ void find_anisotropic_variables(double e, double pl, double pt, double nB, doubl
 	    factorI2011 = commonfactori * axi2 * lambdai3 / 2.0;
 	    factorI2201 = commonfactori * azi2 * lambdai3;
 
-	    factorI401m1 = factorI2011;
-	    factorI420m1 = factorI2201;
+	    //factorI401m1 = factorI2011;
+	    //factorI420m1 = factorI2201;
 
 	    factorI402m1 = commonfactori * axi2 * axi2 * lambdai3 / 8.0;
 	    factorI421m1 = commonfactori * axi2 * azi2 * lambdai3 / 2.0;
@@ -282,6 +288,10 @@ void find_anisotropic_variables(double e, double pl, double pt, double nB, doubl
 
 
 	    factornBai = axi2 * azi * lambdai3 / (2.0*M_PI*M_PI);
+
+	    factorI301m1 = 4.0 / 3.0 * pow(lambdai,4) * pow(axi,4) * azi / (4.0*M_PI*M_PI);
+
+	    factorI320m1 = 2.0 / 3.0 * pow(lambdai,4) * pow(axi,2) * pow(azi,3) / (4.0*M_PI*M_PI);
 
 
 
@@ -296,7 +306,7 @@ void find_anisotropic_variables(double e, double pl, double pt, double nB, doubl
 	    for(int k = 0; k < number_resonances; k++)
 	    {
 	    	dof = (double)degeneracy[k];
-	    	
+
 	    	Eai += dof * factorEai * Gauss_Aniso_1D(Ea_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]);
 	    	PTai += dof * factorPTai * Gauss_Aniso_1D(PTa_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]);
 	    	PLai += dof * factorPLai * Gauss_Aniso_1D(PLa_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]);
@@ -342,10 +352,13 @@ void find_anisotropic_variables(double e, double pl, double pt, double nB, doubl
 	    bn_I2010 = 0.0;
 	    bn_I2200 = 0.0;
 
-	    bn_I1001 = 0.0; 
+	    bn_I1001 = 0.0;
 	    bn2_I1000 = 0.0;
 
-    	// sum over resonances 
+	    bn_I301m1 = 0.0;
+	    bn_I320m1 = 0.0;
+
+    	// sum over resonances
 
 	    for(int k = 0; k < number_resonances; k++)
 	    {
@@ -362,12 +375,15 @@ void find_anisotropic_variables(double e, double pl, double pt, double nB, doubl
 
 		    if(baryon[k] != 0)
 		    {
-		    	bn_I2000 += dof * factorEai * Gauss_Aniso_1D(bn_I2000_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]); 
-		    	bn_I2010 += dof * factorPTai * Gauss_Aniso_1D(bn_I2010_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]); 
+		    	bn_I2000 += dof * factorEai * Gauss_Aniso_1D(bn_I2000_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]);
+		    	bn_I2010 += dof * factorPTai * Gauss_Aniso_1D(bn_I2010_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]);
 		    	bn_I2200 += dof * factorPLai * Gauss_Aniso_1D(bn_I2200_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]);
-		    	 
+
 		    	bn_I1001 += dof * factornBai * Gauss_Aniso_1D(bn_I1001_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]);
 		    	bn2_I1000 += dof * factornBai * Gauss_Aniso_1D(bn2_I1000_integrand, pbar_rootN, pbar_weightN, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]);
+
+		    	bn_I301m1 += dof * factorI301m1 * Gauss_Aniso_1D(bn_I301m1_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]);
+		    	bn_I320m1 += dof * factorI320m1 * Gauss_Aniso_1D(bn_I320m1_integrand, pbar_rootT, pbar_weightT, pbar_pts, axi, azi, mass[k]/lambdai, aBti, baryon[k], sign[k]);
 		    }
 	    }
     	// Evaluate anisotropic functions for J (more 1D Gauss-Laguerre integrals)
@@ -393,29 +409,35 @@ void find_anisotropic_variables(double e, double pl, double pt, double nB, doubl
 	    J[0][1] = 2.0*(Eai+PTai)/axi;
 	    //J[0][2] = I420m1 / lambdaiazi3;        // used identity J420m1 = lambda*az2*(Ea+PLa)
 	    J[0][2] = (Eai+PLai)/azi;
-	    J[0][3] = bn_I2000;   
+	    J[0][3] = bn_I2000;
 
 	    // row 2
 	    J[1][0] = I2011/lambdai2;
 	    J[1][1] = 4.0*I402m1/lambdaiaxi3;
 	    J[1][2] = I421m1/lambdaiazi3;       // identity J421m1 = ax2*az2*lambda*(PTa-PLa)/(ax2-az2) isn't numerically stable right now
 	    //J[1][2] = (PTai - PLai)*axi2/(axi2-azi2)/azi;
-	    J[1][3] = bn_I2010;   
+	    J[1][3] = bn_I2010;
 
 
 	    // row 3
 	    J[2][0] = I2201/lambdai2;
-	    J[2][1] = 2.0 * I421m1 / lambdaiaxi3;
-	    J[2][2] = I440m1 / lambdaiazi3;
-	    J[2][3] = bn_I2200;   
+	    J[2][1] = 2.0*I421m1/lambdaiaxi3;
+	    J[2][2] = I440m1/lambdaiazi3;
+	    J[2][3] = bn_I2200;
 
 
 	    // row 4
 	    //J[3][0] = 3.0*nBai/lambdai;
-	    J[3][0] = bn_I1001/lambdai2; 
-	    J[3][1] = 2.0*nBai/axi;
-	    J[3][2] = nBai/azi;
-	    J[3][3] = bn2_I1000;  
+	    J[3][0] = bn_I1001/lambdai2;
+	    //J[3][1] = 2.0*nBai/axi;       // I can check these two identities
+	    J[3][1] = bn_I301m1/lambdaiaxi3;
+	    //J[3][2] = nBai/azi;
+	    J[3][2] = bn_I320m1/lambdaiazi3;
+	    J[3][3] = bn2_I1000;
+
+	    cout << 2.0*nBai/axi << "\t" << bn_I301m1/lambdaiaxi3 << "\t\t" << nBai/azi << "\t" << bn_I320m1/lambdaiazi3 << endl;
+
+	   // cout << 2.0*nBai/axi << "\t" << bn_I301m1/lambdaiaxi3 << endl;
 
 
 

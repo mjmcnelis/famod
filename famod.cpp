@@ -20,7 +20,7 @@ using namespace std;
 
 // temporary
 const int a = 21;
-const int gla_pts = 32;
+const int gla_pts = 64;
 double root_gla[a][gla_pts];
 double weight_gla[a][gla_pts];
 
@@ -69,7 +69,7 @@ int main()
 	// pdg.dat contains (anti)mesons and baryons, but not antibaryons
 	// so had to add antibaryons manually
 	int N_mesons, N_baryons;
-	
+
 	fscanf(HRG, "%d", &N_mesons);	// read 1st line: number of mesons
 	fscanf(HRG, "%d", &N_baryons);	// read 2nd line: number of baryons
 
@@ -77,7 +77,7 @@ int main()
 
 	int particle_id;
 	char name[20];
-	double mass[N_resonances]; // [GeV] units in file 
+	double mass[N_resonances]; // [GeV] units in file
 	double width;
 	int degeneracy[N_resonances];
 	int baryon[N_resonances], strange, charm, bottom, isospin;
@@ -100,10 +100,10 @@ int main()
 		}
 	}
 
-	
+
 	int sign[N_resonances];				   // sign array for bose/fermi distributions
 	for(int k = 0; k < N_resonances; k++)  // degeneracy = 2*spin + 1
-	{		
+	{
 		if(degeneracy[k] % 2 == 0)
 			sign[k] = 1;  				   // fermion
 		else if(degeneracy[k] % 2 == 1)
@@ -121,7 +121,7 @@ int main()
 	const int aN = 1; // gla (a = 1)
 	const int aT = 2; // gla (a = 2)
 	const int aJ = 3; // gla (a = 3)
-	
+
 	double * pbar_rootN = (double *)malloc(gla_pts * sizeof(double));
 	double * pbar_weightN = (double *)malloc(gla_pts * sizeof(double));
 	double * pbar_rootT = (double *)malloc(gla_pts * sizeof(double));
@@ -209,12 +209,12 @@ int main()
 	//                                                       ::
 	//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-	const double T = 0.155 * GEV_TO_INVERSE_FM;       // temperature in fm^-1
-	const double aB = 2.0;							  // chemical potential over temperature 
+	const double T = 0.135 * GEV_TO_INVERSE_FM;       // temperature in fm^-1
+	const double aB = 4.0;							  // chemical potential over temperature
 	double ax = 0.9;
-	double az = 1.1;    // it's because of the rounding errors for ax ~ az
-	double lambda = 0.16 * GEV_TO_INVERSE_FM;
-	double aBt = 1.9; 
+	double az = 0.9;    // it's because of the rounding errors for ax ~ az
+	double lambda = 0.17 * GEV_TO_INVERSE_FM;
+	double aBt = 2.8;
 	// double ax = 1.11875604453775;                           // alpha_perp
 	// double az = 0.752040817012744;                          // alpha_L
 	// double lambda = 0.156200599527327 * GEV_TO_INVERSE_FM;  // lambda in fm^-1
@@ -228,7 +228,7 @@ int main()
 
 	double Eeq = 0.0;
 	double Peq = 0.0;
-	double nBeq = 0.0; 
+	double nBeq = 0.0;
 
 	double dof;
 
@@ -245,21 +245,21 @@ int main()
 
 
 	// printf("Calculate proton energy density contribution\n");
-	// double mass_p = 0.938 * GEV_TO_INVERSE_FM; 
-	// double degeneracy_p = 2.0; 
+	// double mass_p = 0.938 * GEV_TO_INVERSE_FM;
+	// double degeneracy_p = 2.0;
 
 	// double Ep_numerical = degeneracy_p * factEeq * Gauss_Thermo_1D(Eeq_integrand, pbar_rootT, pbar_weightT, gla_pts, mass_p/T, aB, 1, 1);
 
 	// double Ep_series = 0.0;
 	// double prefactor;
-	// int imax = 3; 
+	// int imax = 3;
 	// printf("Proton energy series:\n");
 	// for(int i = 1; i < imax; i++)
 	// {
 	// 	prefactor = degeneracy_p * pow(-1.0,i+1) * exp((double)i*aB) * factEeq / pow((double)i,4);
 
-	// 	Ep_series += prefactor * Gauss_Thermo_1D(Eeq_integrand, pbar_rootT, pbar_weightT, gla_pts, (double)i*mass_p/T, aB, 0, 0); 
-	// 	printf("%f\n", Ep_series); 
+	// 	Ep_series += prefactor * Gauss_Thermo_1D(Eeq_integrand, pbar_rootT, pbar_weightT, gla_pts, (double)i*mass_p/T, aB, 0, 0);
+	// 	printf("%f\n", Ep_series);
 	// }
 	// cout << "Proton energy series =    " << setprecision(15) <<  Ep_series << endl;
 	// cout << "Proton energy numerical = " << setprecision(15) << Ep_numerical << "\n" << endl;
@@ -273,9 +273,9 @@ int main()
 
 	// choose ahydro quantities
 	double e = Eeq;
-	double pt = 0.9 * Peq;
-	double pl = 1.1 * Peq;
-	double nB = nBeq; 
+	double pt = 0.8 * Peq;
+	double pl = 0.8 * Peq;
+	double nB = nBeq;
 
 	printf("\nAnisotropic hydro input:\n");
 	cout << "e_a = " << setprecision(15) << Eeq << endl;
@@ -289,12 +289,12 @@ int main()
 
 	printf("\nThermodynamic variables:\n");
 	cout << "T = " << setprecision(5) << T / GEV_TO_INVERSE_FM << " GeV" << endl;
-	cout << "aB = " << setprecision(5) << aB << endl; 
+	cout << "aB = " << setprecision(5) << aB << endl;
 	printf("\nAnisotropic variables:\n");
 	cout << "lambda = " << lambda / GEV_TO_INVERSE_FM << " GeV" << endl;
 	cout << "ax = " << setprecision(8) << ax << endl;
 	cout << "az = " << setprecision(8) << az << endl;
-	cout << "aBt = " << setprecision(5) << aBt << endl; 
+	cout << "aBt = " << setprecision(5) << aBt << endl;
 
 	// mbar = mass / lambda
 	double mbar[N_resonances];
@@ -305,7 +305,7 @@ int main()
 	double factEa = pow(ax,2) * pow(az,1) * pow(lambda,4) / (4.0*M_PI*M_PI);
 	double factPTa = pow(ax,4) * pow(az,1) * pow(lambda,4) / (8.0*M_PI*M_PI);
 	double factPLa = pow(ax,2) * pow(az,3) * pow(lambda,4) / (4.0*M_PI*M_PI);
-	double factnBa = pow(ax,2) * pow(az,1) * pow(lambda,3) / (2.0*M_PI*M_PI);      
+	double factnBa = pow(ax,2) * pow(az,1) * pow(lambda,3) / (2.0*M_PI*M_PI);
 	double factI402m1 = pow(ax,6) * pow(az,1) * pow(lambda,5) / (32.0*M_PI*M_PI);
 	double factI421m1 = pow(ax,4) * pow(az,3) * pow(lambda,5) / (8.0*M_PI*M_PI);
 
@@ -313,7 +313,7 @@ int main()
 	double Ea = 0.0;
 	double PTa = 0.0;
 	double PLa = 0.0;
-	double nBa = 0.0; 
+	double nBa = 0.0;
 	double I402m1 = 0.0;
 	double I421m1 = 0.0;
 
@@ -417,7 +417,7 @@ int main()
 	double modEa = 0.0;
 	double modPTa = 0.0;
 	double modPLa = 0.0;
-	double modnBa = 0.0; 
+	double modnBa = 0.0;
 	double modpixx = 0.0;
 	double modpixy = 0.0;
 	double modWxz = 0.0;
@@ -434,7 +434,7 @@ int main()
 
 		if(baryon[k] != 0)
 		{
-			modnBa += dof * factnBa * Gauss_Aniso_1D(nBa_integrand, pbar_rootN, pbar_weightN, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);  
+			modnBa += dof * factnBa * Gauss_Aniso_1D(nBa_integrand, pbar_rootN, pbar_weightN, gla_pts, ax, az, mbar[k], aBt, baryon[k], sign[k]);
 		}
 
 		modEa += dof * factmodEa * Gauss_Mod_Aniso_3D(modEa_integrand, xphi_root, xphi_weight, costheta_root, costheta_weight, pbar_rootT, pbar_weightT, angle_pts, angle_pts, gla_pts, ax, az, A, n, mbar[k], aBt, baryon[k], sign[k]);
