@@ -366,11 +366,12 @@ int main()
 
 	double betapi = I402m1 / (lambda);
 
+	double betaW = I421m1 / (lambda);
 
 	// viscous inputs
-	double pixx = -0.9999 * 2.0 * betapi / (ax * ax);
+	double pixx = 0.0 * 2.0 * betapi / (ax * ax);
 	double pixy = 0.0 * PTa;
-	double Wxz = 0.0 * sqrt(PLa*PTa);
+	double Wxz = 0.999 * (ax + az) * betaW / pow(ax * az,1.5);
 	double Wyz = 0.0 * sqrt(PLa*PTa);
 	double Ttx = 0.0;
 	double Tty = 0.0;
@@ -579,8 +580,8 @@ int main()
 
 	// printf("\n");
 
-	// cout << setprecision(4) << "Txz / sqrt(PLPT):       " << Wxz / sqrt(PLa*PTa) << endl;
-	// cout << setprecision(4) << "modTxz / sqrt(PLPT):    " << modWxz / sqrt(PLa*PTa)<< endl;
+	cout << setprecision(4) << "Txz / Peq:       " << Wxz / Peq << endl;
+	cout << setprecision(4) << "modTxz / Peq:    " << modWxz / Peq << endl;
 	// cout << setprecision(4) << "dTxz / sqrt(PLPT):      " << (modWxz - Wxz) / sqrt(PLa*PTa)<< endl;
 
 	// printf("\n");
